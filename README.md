@@ -36,9 +36,17 @@ src/
 │   ├── tutorials.tsx            stepped schematics (auto-play, arrows, dots)
 │   ├── scenes.tsx               SVG scenes: B-SOiD, brain decoding, Vowel
 │   └── scenes-bank.tsx          SVG scenes: production ML, agents, applications
+├── lib/
+│   ├── actions.ts               the closed grammar of page actions the assistant may emit
+│   ├── page-actions.ts          how each action moves the page (spotlight, step, filter, prefs)
+│   ├── prefs.ts                 display preferences (theme, text size, density, contrast, motion, accent)
+│   └── chat-prompt.ts           system prompt built from the site data
 └── data/
     ├── site.ts                  name, links, headline, key numbers
-    └── projects.ts              ← add / edit rows here
+    ├── projects.ts              ← add / edit rows here
+    ├── steps.ts                 schematic step captions (shared by tutorials and the assistant)
+    ├── tour.ts                  the guided tour, stop by stop
+    └── bot.ts                   public facts, suggestions, refusals and per-row hints for the assistant
 public/
 └── images/alex.jpg              portrait
 private/
@@ -58,7 +66,10 @@ A small grounded chatbot in the bottom-right corner. It answers only from the pa
 - `src/app/api/chat/route.ts` — calls the Claude API and streams the reply; validates input, caps turns and length, rate-limits per IP.
 - `src/lib/chat-prompt.ts` — builds the system prompt from the site data, so the bot can never know more than the page.
 - `src/components/AskPanel.tsx` — the button and panel.
-- `src/lib/actions.ts` + `src/lib/page-actions.ts` — the closed set of page actions the bot may emit as tokens in its reply (`[[goto:slug]]`, `[[step:slug:n]]`, `[[filter:chapter]]`, `[[theme:dark|light|auto]]`, `[[expand:slug]]`, `[[highlight:resume|linkedin|github]]`). The panel strips them from the text and runs only well-formed ones against known targets; step captions live in `src/data/steps.ts` so the prompt and the tutorials share them.
+- `src/lib/actions.ts` + `src/lib/page-actions.ts` — the closed set of page actions the bot may emit as tokens in its reply: `[[goto:slug]]`, `[[step:slug:n]]`, `[[expand:slug]]`, `[[filter:chapter|all]]`, `[[highlight:resume|linkedin|github]]`, `[[tour:start|stop]]`, the display preferences (`[[theme:dark|light|auto]]`, `[[textsize:normal|large]]`, `[[density:comfortable|compact]]`, `[[contrast:normal|high]]`, `[[motion:on|off]]`, `[[accent:red|blue|green]]`) and `[[style:reset]]`. The panel strips them from the text and runs only well-formed ones against known targets; step captions live in `src/data/steps.ts` so the prompt and the tutorials share them.
+- **Guided tour** — `src/data/tour.ts` lists the stops (a row, a schematic step, or a highlight). Visitors start it from the chip in the panel, or the bot starts it with `[[tour:start]]`; a bar at the bottom of the page steps through with Next / ← → / Esc.
+- **Display preferences** — `src/lib/prefs.ts` writes `data-*` attributes on `<html>` (persisted in `localStorage`, restored before first paint by the inline boot script in `layout.tsx`); `globals.css` styles them. A "Display: … reset" line in the panel shows what is active. `motion: off` also stops the schematics from auto-playing.
+- **Context awareness** — each question is sent with which row is on screen and which step its schematic is on (`context` in the request body); the route appends it to the message as a bracketed line so "this diagram" resolves without asking. Linger on a row for eight seconds and a one-line hint offers a question about it (`hints` in `src/data/bot.ts`; at most three per visit).
 
 Configuration (Vercel → Settings → Environment Variables, or `.env.local` for development; see `.env.example`):
 

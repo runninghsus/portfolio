@@ -939,6 +939,240 @@ body[data-filter] .chapter > .feature:last-child {
   cursor: progress;
 }
 
+/* ---- Display preferences (data-* on <html>, set by the assistant, remembered per visitor) ---- */
+html[data-textsize="large"] {
+  --fs-display: clamp(38px, 4.8vw, 50px);
+  --fs-heading: 29px;
+  --fs-body: 19px;
+  --fs-label: 14px;
+  --fs-figure: 48px;
+}
+html[data-density="compact"] .hero {
+  padding-block: 40px 56px;
+}
+html[data-density="compact"] .block {
+  padding-block: 40px;
+}
+html[data-density="compact"] .feature {
+  padding-block: 34px;
+  gap: 40px;
+}
+html[data-density="compact"] .keyfacts.in-panel {
+  padding-block: 26px 0;
+  margin-top: 24px;
+}
+html[data-density="compact"] .feature p {
+  margin-top: 10px;
+}
+html[data-contrast="high"] {
+  --text: var(--ink);
+  --muted: #3f3a36;
+  --rule: #8f8781;
+  --dark-panel-muted: #e6e0da;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-contrast="high"]:not([data-theme="light"]) {
+    --muted: #d6cfc8;
+    --rule: #7a726c;
+  }
+}
+html[data-contrast="high"][data-theme="dark"] {
+  --muted: #d6cfc8;
+  --rule: #7a726c;
+}
+html[data-motion="off"] * {
+  transition: none !important;
+  animation: none !important;
+}
+html[data-accent="blue"] {
+  --accent: #2f5d9e;
+  --accent-hover: #244b81;
+  --link: #2f5d9e;
+}
+html[data-accent="green"] {
+  --accent: #2f6b4f;
+  --accent-hover: #24553f;
+  --link: #2f6b4f;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-accent="blue"]:not([data-theme="light"]) {
+    --accent: #5f8ed6;
+    --accent-hover: #7aa3e2;
+    --link: #7aa3e2;
+  }
+  html[data-accent="green"]:not([data-theme="light"]) {
+    --accent: #5aa683;
+    --accent-hover: #74b998;
+    --link: #74b998;
+  }
+}
+html[data-accent="blue"][data-theme="dark"] {
+  --accent: #5f8ed6;
+  --accent-hover: #7aa3e2;
+  --link: #7aa3e2;
+}
+html[data-accent="green"][data-theme="dark"] {
+  --accent: #5aa683;
+  --accent-hover: #74b998;
+  --link: #74b998;
+}
+/* the hand-drawn schematics hard-code the red; an accent change re-colors them through CSS */
+html[data-accent] .fig [fill="#C74634"] {
+  fill: var(--accent);
+}
+html[data-accent] .fig [stroke="#C74634"] {
+  stroke: var(--accent);
+}
+html[data-accent] .fig stop[stop-color="#C74634"] {
+  stop-color: var(--accent);
+}
+html[data-accent] .btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---- Guided tour bar ---- */
+.tour-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 42;
+  width: min(720px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 16px 14px 20px;
+  background: var(--dark-panel);
+  color: var(--dark-panel-text);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.tour-text {
+  flex: 1;
+  min-width: 0;
+}
+.tour-count {
+  display: block;
+  color: var(--dark-panel-muted);
+  margin-bottom: 2px;
+}
+.tour-text b {
+  display: block;
+  font-weight: 600;
+}
+.tour-text p {
+  margin: 4px 0 0;
+  color: var(--dark-panel-muted);
+  line-height: 1.4;
+}
+.tour-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.tour-nav > button:first-child {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: none;
+  color: var(--dark-panel-text);
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.tour-nav > button:first-child:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.tour-end {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--dark-panel-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.tour-end:hover {
+  color: var(--dark-panel-text);
+}
+@media (max-width: 640px) {
+  .tour-bar {
+    flex-direction: column;
+    align-items: stretch;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+  }
+  .tour-nav {
+    justify-content: flex-end;
+  }
+}
+
+/* ---- Lingering hint + display line in the panel ---- */
+.ask-hint {
+  position: fixed;
+  right: 20px;
+  bottom: 76px;
+  z-index: 40;
+  max-width: min(360px, calc(100vw - 40px));
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  animation: hint-in 0.25s ease-out;
+}
+.ask-hint .label {
+  color: var(--accent);
+  margin-right: 6px;
+}
+.ask-hint:hover {
+  border-color: var(--accent);
+}
+@keyframes hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ask-sugg .ask-tour {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.ask-prefs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: var(--fs-label);
+}
+.ask-prefs button {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
 /* Footer */
 .site-footer {
   background: var(--bg-alt);

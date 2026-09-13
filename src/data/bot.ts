@@ -28,3 +28,14 @@ export const suggestions: string[] = [
 
 /** Topics the bot must refuse, in its own words: internal figures, product names, customers, colleagues. */
 export const refusals = "Confidential: dollar figures, revenue or opportunity values, internal metrics or thresholds, model performance numbers, product names, customer or prospect information, colleague names, internal strategy, and anything about the bank not on this site.";
+
+/** One gentle suggested question per row, offered when a visitor lingers on it (at most three per visit). */
+export const hints: Record<string, string> = {
+  "production-ml": "Why three separate checks instead of one accuracy metric?",
+  "agentic-ai": "How does the agent system verify its answers?",
+  "data-apps": "What makes these applications different from dashboards?",
+  "b-soid": "How does B-SOiD find behaviors without labels?",
+  "a-soid": "When does A-SOiD ask the expert, and when doesn't it?",
+  "neural-decoding": "How was 160 TB of video and brain data processed?",
+  vowel: "What does the wedding app's assistant do when it doesn't know?",
+};

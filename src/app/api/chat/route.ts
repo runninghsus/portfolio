@@ -79,8 +79,17 @@ export async function POST(req: NextRequest) {
   }
 
   let messages: Msg[] = [];
+  let context = "";
   try {
-    const body = (await req.json()) as { messages?: unknown };
+    const body = (await req.json()) as { messages?: unknown; context?: Record<string, unknown> };
+    if (body.context && typeof body.context === "object") {
+      const c = body.context;
+      const parts: string[] = [];
+      if (typeof c.rowTitle === "string" && typeof c.row === "string") parts.push(`viewing the row "${clean(c.rowTitle).slice(0, 120)}" (#${clean(c.row).slice(0, 40)})`);
+      if (typeof c.step === "number" && typeof c.stepTitle === "string") parts.push(`its schematic is on step ${Math.round(c.step)}: "${clean(c.stepTitle).slice(0, 120)}"`);
+      if (typeof c.filter === "string" && c.filter !== "all") parts.push(`page filtered to the "${clean(c.filter).slice(0, 20)}" chapter`);
+      if (parts.length) context = `[Visitor context: ${parts.join("; ")}.]`;
+    }
     if (Array.isArray(body.messages)) {
       messages = body.messages
         .filter((m): m is { role: string; content: unknown } => !!m && typeof m === "object" && "role" in m)
@@ -93,6 +102,10 @@ export async function POST(req: NextRequest) {
   }
   if (messages.length === 0 || messages[messages.length - 1].role !== "user") {
     return streamText("Ask me something about Alex's work.", 400);
+  }
+  if (context) {
+    const last = messages[messages.length - 1];
+    messages[messages.length - 1] = { ...last, content: `${last.content}\n\n${context}` };
   }
 
   const key = process.env.ANTHROPIC_API_KEY;

@@ -18,7 +18,10 @@ function Tutorial({ slug, interval = 4000, height = 268, children }: { slug: str
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const sync = () => setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "off");
+    sync();
+    window.addEventListener("prefs:change", sync);
+    return () => window.removeEventListener("prefs:change", sync);
   }, []);
   useEffect(() => {
     if (paused || reduced || held) return;

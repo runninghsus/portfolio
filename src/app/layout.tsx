@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import AskPanel from "@/components/AskPanel";
 import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
-import { THEME_BOOT } from "@/lib/theme";
+import { PREFS_BOOT } from "@/lib/prefs";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={sourceSans.variable} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        <script dangerouslySetInnerHTML={{ __html: PREFS_BOOT }} />
         <main className="flex-1">{children}</main>
         <Footer />
         <AskPanel />
