@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { Item } from "@/data/projects";
 import ReadMore from "@/components/ReadMore";
+import ExtIcon from "@/components/ExtIcon";
 
 /** Full-width row: text on one side, diagram on the other, alternating. */
 export default function FeatureRow({ item, figure, flip = false }: { item: Item; figure: ReactNode; flip?: boolean }) {
@@ -30,7 +31,8 @@ export default function FeatureRow({ item, figure, flip = false }: { item: Item;
           {item.tags.join(" · ")}
           {item.links?.map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="text-link" style={{ marginLeft: 14 }}>
-              {l.label} ↗
+              {l.label}
+              <ExtIcon />
             </a>
           ))}
         </div>

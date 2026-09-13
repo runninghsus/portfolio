@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import FeatureRow from "@/components/FeatureRow";
 import JumpCards from "@/components/JumpCards";
 import KeyFacts from "@/components/KeyFacts";
+import ExtIcon from "@/components/ExtIcon";
 import {
   PipelineTutorial,
   AgentsTutorial,
@@ -40,7 +41,8 @@ export default function Home() {
                 Download résumé
               </a>
               <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="btn ghost">
-                LinkedIn ↗
+                LinkedIn
+                <ExtIcon />
               </a>
             </div>
           </div>

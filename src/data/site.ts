@@ -10,8 +10,8 @@ export const site = {
   title: "Machine Learning · Technical Leadership · Business Communication",
   location: "United States", // TODO: e.g. "Chicago, IL"
   // Email intentionally not published; LinkedIn is the contact channel.
-  // Set this to your deployed URL once live (used for metadata / Open Graph).
-  url: "https://runninghsus.github.io",
+  // Live address (used for metadata / Open Graph). Update if a custom domain is added.
+  url: "https://alexanderhsu.vercel.app",
   links: {
     github: "https://github.com/runninghsus",
     linkedin: "https://www.linkedin.com/in/alexander-hsu23/",

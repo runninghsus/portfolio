@@ -199,6 +199,12 @@ h1 {
 }
 
 /* Buttons & links */
+.ext {
+  display: inline-block;
+  margin-left: 0.3em;
+  vertical-align: -0.02em;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
