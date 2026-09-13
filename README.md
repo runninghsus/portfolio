@@ -2,7 +2,7 @@
 
 Personal portfolio — production ML, agentic AI and decision systems, plus open-source ML research and a shipped iOS app.
 
-Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS v4. Deployed on Vercel at https://alexanderhsu.vercel.app. The site itself is static; one serverless route (`/api/chat`) powers the "Ask about my work" assistant.
+Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS v4. Deployed on Vercel at https://alexander-hsu.com. The site itself is static; one serverless route (`/api/chat`) powers the "Ask about my work" assistant.
 
 ## Run locally
 
@@ -65,11 +65,14 @@ A small grounded chatbot in the bottom-right corner. It answers only from the pa
 
 - `src/app/api/chat/route.ts` — calls the Claude API and streams the reply; validates input, caps turns and length, rate-limits per IP.
 - `src/lib/chat-prompt.ts` — builds the system prompt from the site data, so the bot can never know more than the page.
-- `src/components/AskPanel.tsx` — the button and panel.
+- `src/components/AskPanel.tsx` — the launcher, speech bubble and panel.
+- `src/components/Avatar.tsx` — the launcher itself: a die-cut sticker of Alex in a doctoral tam, drawn as SVG. CSS in `globals.css` blinks the eyes, moves the mouth while a reply streams (`talking`) and nods with a tassel swing on greeting (`wave`); all of it stops under reduced-motion or the assistant's `motion: off`. The avatar can be dragged anywhere (it snaps to the nearest edge and remembers its spot in `localStorage`); on desktop the open panel can be dragged by its header.
 - `src/lib/actions.ts` + `src/lib/page-actions.ts` — the closed set of page actions the bot may emit as tokens in its reply: `[[goto:slug]]`, `[[step:slug:n]]`, `[[expand:slug]]`, `[[filter:chapter|all]]`, `[[highlight:resume|linkedin|github]]`, `[[tour:start|stop]]`, the display preferences (`[[theme:dark|light|auto]]`, `[[textsize:normal|large]]`, `[[density:comfortable|compact]]`, `[[contrast:normal|high]]`, `[[motion:on|off]]`, `[[accent:red|blue|green]]`) and `[[style:reset]]`. The panel strips them from the text and runs only well-formed ones against known targets; step captions live in `src/data/steps.ts` so the prompt and the tutorials share them.
+- **Speech bubble** — 1.6 s after load the avatar offers the tour ("Start the tour" / "Not now"), once per browser session. After that it shows one preset question at a time, rotating every 8 s (paused on hover); tapping it asks the question. Lingering on a row for 8 s puts that row's question (`hints` in `src/data/bot.ts`) in the bubble instead, at most three times per visit. Dismissing the bubble, or opening the panel, keeps it quiet for the rest of the session.
+- **Preset questions** — `suggestions` in `src/data/bot.ts`. Three show at a time ("More ideas" rotates through the rest) before the first question, and they stay one tap away afterwards behind the panel's "Suggestions" toggle; "Start over" clears the conversation. Scrolling to a row always works: if the page is filtered to another chapter, the filter is dropped first.
 - **Guided tour** — `src/data/tour.ts` lists the stops (a row, a schematic step, or a highlight). Visitors start it from the chip in the panel, or the bot starts it with `[[tour:start]]`; a bar at the bottom of the page steps through with Next / ← → / Esc.
 - **Display preferences** — `src/lib/prefs.ts` writes `data-*` attributes on `<html>` (persisted in `localStorage`, restored before first paint by the inline boot script in `layout.tsx`); `globals.css` styles them. A "Display: … reset" line in the panel shows what is active. `motion: off` also stops the schematics from auto-playing.
-- **Context awareness** — each question is sent with which row is on screen and which step its schematic is on (`context` in the request body); the route appends it to the message as a bracketed line so "this diagram" resolves without asking. Linger on a row for eight seconds and a one-line hint offers a question about it (`hints` in `src/data/bot.ts`; at most three per visit).
+- **Context awareness** — each question is sent with which row is on screen and which step its schematic is on (`context` in the request body); the route appends it to the message as a bracketed line so "this diagram" resolves without asking. The same context feeds the bubble's row-specific questions.
 
 Configuration (Vercel → Settings → Environment Variables, or `.env.local` for development; see `.env.example`):
 

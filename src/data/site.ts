@@ -11,7 +11,7 @@ export const site = {
   location: "United States", // TODO: e.g. "Chicago, IL"
   // Email intentionally not published; LinkedIn is the contact channel.
   // Live address (used for metadata / Open Graph). Update if a custom domain is added.
-  url: "https://alexanderhsu.vercel.app",
+  url: "https://alexander-hsu.com",
   links: {
     github: "https://github.com/runninghsus",
     linkedin: "https://www.linkedin.com/in/alexander-hsu23/",

@@ -18,12 +18,17 @@ export const facts: string[] = [
   "Skills inventory (from the résumé) — Machine learning: classical ML (scikit-learn), gradient boosting (LightGBM, XGBoost), deep learning (PyTorch, TensorFlow / Keras), learning-to-rank and recommender systems, propensity modeling, active learning, dimensionality reduction (UMAP), clustering (HDBSCAN), evaluation (AUC, lift). Applied AI: Amazon Bedrock, multi-agent orchestration, RAG / grounding, human-in-the-loop systems, verification and structured evaluation. Production ML: AWS SageMaker, Snowflake, scheduled AWS pipelines, Shakudo, Evidently AI, Anomalo, model monitoring, model governance and validation (MRM). Languages: Python, SQL, Swift, TypeScript / JavaScript. Tools: FastAPI, React, Streamlit, Power BI, Tableau, Supabase, Fly.io, Polars / Pandas, Git, Linux.",
 ];
 
-/** Starter questions shown in the panel before the visitor types. */
+/** Preset questions, shown three at a time in this order ("More ideas" rotates to the next three). */
 export const suggestions: string[] = [
-  "What did Alex build at Huntington?",
-  "Show me how the agent system verifies its answers",
-  "What is B-SOiD and who uses it?",
-  "Just show me the banking work",
+  "Show me the banking work",
+  "What value did Alex bring to the bank?",
+  "What innovative projects did Alex work on during his PhD?",
+  "What does Alex lead today?",
+  "How does the agent system verify its answers?",
+  "What did Alex build for his own wedding?",
+  "Which languages and tools does Alex use?",
+  "What makes Alex a fit for a principal ML role?",
+  "How do I get Alex's résumé?",
 ];
 
 /** Topics the bot must refuse, in its own words: internal figures, product names, customers, colleagues. */

@@ -1,8 +1,17 @@
 import type { Action } from "@/lib/actions";
 import { applyPref, resetPrefs, type PrefKey, type PrefValue } from "@/lib/prefs";
 
+/** Set or clear the chapter filter on <body>; the panel listens for "filter:change" to update its pill. */
+export function setFilter(chapter: string) {
+  if (chapter === "all") delete document.body.dataset.filter;
+  else document.body.dataset.filter = chapter;
+  window.dispatchEvent(new CustomEvent("filter:change", { detail: chapter }));
+}
+
 export function spotlight(el: Element | null, block: ScrollLogicalPosition = "start") {
   if (!el) return;
+  // A row inside a filtered-out chapter has no box to scroll to: show the whole page again first.
+  if (document.body.dataset.filter && el.getClientRects().length === 0) setFilter("all");
   el.scrollIntoView({ behavior: "smooth", block });
   el.classList.remove("spotlight");
   void (el as HTMLElement).offsetWidth; // restart the animation if it is already running
@@ -22,7 +31,6 @@ export function goToStep(slug: string, step: number) {
 }
 
 export type ActionHost = {
-  onFilter: (chapter: string) => void;
   onTour: (cmd: "start" | "stop") => void;
 };
 
@@ -40,9 +48,7 @@ export function runAction(a: Action, host: ActionHost) {
       goToStep(a.slug, a.step);
       break;
     case "filter":
-      if (a.chapter === "all") delete document.body.dataset.filter;
-      else document.body.dataset.filter = a.chapter;
-      host.onFilter(a.chapter);
+      setFilter(a.chapter);
       if (a.chapter !== "all") document.querySelector(`.chapter[data-chapter="${a.chapter}"] .feature`)?.scrollIntoView({ behavior: "smooth", block: "start" });
       break;
     case "pref":

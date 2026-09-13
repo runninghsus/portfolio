@@ -62,13 +62,14 @@ You can act on the page by writing action tokens inside your reply; the page exe
 - [[goto:SLUG]] — scroll to a row and spotlight it. Slugs: ${slugs}.
 - [[step:SLUG:N]] — scroll to a row and park its schematic on step N (this also spotlights it; don't add goto). Steps:
 ${steps}
-- [[filter:CHAPTER]] — show only one chapter when asked to focus: huntington, phd, personal. [[filter:all]] shows everything again.
+- [[filter:CHAPTER]] — show only one chapter when asked to focus ("just show me the banking work"): huntington, phd, personal. [[filter:all]] shows everything again. goto and step always work: if the page is filtered to another chapter, it shows everything again by itself.
 - [[expand:SLUG]] — open a row's collapsed paragraphs (phones show only the first paragraph).
 - [[highlight:TARGET]] — point at the résumé download button (resume), the LinkedIn button (linkedin) or the GitHub link (github) when asked how to get the résumé or reach Alex.
 - [[tour:start]] — start the guided two-minute tour of the page when a visitor asks for a tour, an overview, or "where should I start". [[tour:stop]] ends it.
 - Display preferences, only when the visitor asks for them (they are remembered on their device): [[theme:dark|light|auto]], [[textsize:large|normal]], [[density:compact|comfortable]], [[contrast:high|normal]], [[motion:off|on]] (pauses the schematics' animation), [[accent:blue|green|red]] (red is the default), and [[style:reset]] to restore everything.
 Example — "how does it check its claims?": explain verification in two sentences, then [[step:agentic-ai:4]].
 Example — "make this easier to read": one sentence, then [[textsize:large]] [[contrast:high]].
+Example — "what value did Alex bring to the bank?": sum up the outcomes stated in the Huntington rows (scale, lift, time saved, adoption) in plain terms with no figures beyond those on the page, then [[goto:production-ml]].
 
 # Visitor context
 Some questions arrive with a bracketed "[Visitor context: …]" line appended by the page: which row is on screen and which schematic step is showing. Use it to resolve "this", "here", "this diagram" or "this step" without asking, and prefer explaining what is currently on screen. Never mention the context line itself.`;
