@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export: works on Vercel as-is and also on GitHub Pages / Cloudflare Pages.
-  // Remove `output: "export"` if you later add server features (API routes, ISR, etc.).
-  output: "export",
+  // Server output (not a static export): the /api/chat route needs a serverless function.
+  // Vercel handles this automatically; nothing else on the site changes.
   images: { unoptimized: true },
   trailingSlash: true,
 };

@@ -2,7 +2,7 @@
 
 Personal portfolio — production ML, agentic AI and decision systems, plus open-source ML research and a shipped iOS app.
 
-Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS v4. Statically exported, so it deploys to Vercel, GitHub Pages, or Cloudflare Pages with no server.
+Built with Next.js 15 (App Router), TypeScript, and Tailwind CSS v4. Deployed on Vercel at https://alexanderhsu.vercel.app. The site itself is static; one serverless route (`/api/chat`) powers the "Ask about my work" assistant.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ If edits made by another program (a sync tool, a remote editor) are not picked u
 npm run dev:poll
 ```
 
-`npm run build` produces a static site in `out/`.
+`npm run build` builds the site (static pages plus the `/api/chat` function).
 
 ## Where things live
 
@@ -50,15 +50,27 @@ docs/
 
 Adding a row is one object in `src/data/projects.ts` plus a figure keyed by its slug in `src/app/page.tsx`.
 
-## Deploy to Vercel
+## The assistant ("Ask about my work")
 
-1. Push this repo to GitHub.
-2. Go to vercel.com → **Add New Project** → import `runninghsus/portfolio`. Framework preset is detected as Next.js; leave the defaults.
-3. Every push to `main` redeploys. Add a custom domain under Project → Settings → Domains when you have one.
+A small grounded chatbot in the bottom-right corner. It answers only from the page data (`src/data/projects.ts`, `src/data/site.ts`) plus the public facts in `src/data/bot.ts`, refuses confidential topics, and points to LinkedIn for anything it doesn't know.
 
-## Deploy to GitHub Pages (alternative)
+- `src/app/api/chat/route.ts` — calls the Claude API and streams the reply; validates input, caps turns and length, rate-limits per IP.
+- `src/lib/chat-prompt.ts` — builds the system prompt from the site data, so the bot can never know more than the page.
+- `src/components/AskPanel.tsx` — the button and panel.
 
-Because the site is a static export, GitHub Pages also works. Uncomment the workflow in `.github/workflows/pages.yml`, set `basePath: "/portfolio"` in `next.config.ts` (or use a custom domain), and enable Pages → Source: GitHub Actions in the repo settings.
+Configuration (Vercel → Settings → Environment Variables, or `.env.local` for development; see `.env.example`):
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `ANTHROPIC_API_KEY` | yes | Without it the panel shows a polite "not switched on yet" message. |
+| `CHAT_MODEL` | no | Defaults to `claude-haiku-4-5`. |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | recommended | Shared per-IP and global daily limits across function instances (`CHAT_DAILY_PER_IP`, `CHAT_DAILY_GLOBAL`). |
+
+Also set a monthly spend limit in the Anthropic console as the final backstop. To add facts the bot may state (location, work authorization, notice period), edit `facts` in `src/data/bot.ts`.
+
+## Deploy
+
+Vercel is connected to `main`: every push builds and deploys automatically. A custom domain can be added under the project's Domains page; then update `url` in `src/data/site.ts` and the résumé header.
 
 ## Before publishing — search for `TODO`
 

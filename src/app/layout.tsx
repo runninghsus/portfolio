@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import AskPanel from "@/components/AskPanel";
 import { site } from "@/data/site";
 
 const sourceSans = Source_Sans_3({
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen flex flex-col">
         <main className="flex-1">{children}</main>
         <Footer />
+        <AskPanel />
       </body>
     </html>
   );
