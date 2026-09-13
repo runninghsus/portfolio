@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# local scratch (never commit)
+_to_delete/
+_staging/
+Claude outputs/
+out/
+.next/
