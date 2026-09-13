@@ -16,7 +16,7 @@ export const site = {
     github: "https://github.com/runninghsus",
     linkedin: "https://www.linkedin.com/in/alexander-hsu23/",
   },
-  resumePdf: "/resume.pdf",
+  resumePdf: "/api/resume", // served from private/resume.pdf, behind Turnstile when configured
 } as const;
 
 

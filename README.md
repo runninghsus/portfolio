@@ -40,11 +40,12 @@ src/
     ├── site.ts                  name, links, headline, key numbers
     └── projects.ts              ← add / edit rows here
 public/
-├── resume.pdf                   the résumé the hero button downloads
 └── images/alex.jpg              portrait
+private/
+└── resume.pdf                   the résumé, served by /api/resume (not a static file)
 docs/
-├── resume-source.html           ← edit, then re-render to PDF (Playwright/Chromium)
-├── Alexander_Hsu_Resume_2026.pdf
+├── resume-source.html           ← edit, then re-render to private/resume.pdf (Playwright/Chromium)
+├── private/                     fully quantified application résumé (git-ignored)
 └── github-profile-README.md     template for github.com/runninghsus/runninghsus
 ```
 
@@ -57,6 +58,7 @@ A small grounded chatbot in the bottom-right corner. It answers only from the pa
 - `src/app/api/chat/route.ts` — calls the Claude API and streams the reply; validates input, caps turns and length, rate-limits per IP.
 - `src/lib/chat-prompt.ts` — builds the system prompt from the site data, so the bot can never know more than the page.
 - `src/components/AskPanel.tsx` — the button and panel.
+- `src/lib/actions.ts` + `src/lib/page-actions.ts` — the closed set of page actions the bot may emit as tokens in its reply (`[[goto:slug]]`, `[[step:slug:n]]`, `[[filter:chapter]]`, `[[theme:dark|light|auto]]`, `[[expand:slug]]`, `[[highlight:resume|linkedin|github]]`). The panel strips them from the text and runs only well-formed ones against known targets; step captions live in `src/data/steps.ts` so the prompt and the tutorials share them.
 
 Configuration (Vercel → Settings → Environment Variables, or `.env.local` for development; see `.env.example`):
 
@@ -67,6 +69,10 @@ Configuration (Vercel → Settings → Environment Variables, or `.env.local` fo
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | recommended | Shared per-IP and global daily limits across function instances (`CHAT_DAILY_PER_IP`, `CHAT_DAILY_GLOBAL`). |
 
 Also set a monthly spend limit in the Anthropic console as the final backstop. To add facts the bot may state (location, work authorization, notice period), edit `facts` in `src/data/bot.ts`.
+
+## The résumé download
+
+`public/` no longer contains the PDF. `private/resume.pdf` is served by `src/app/api/resume/route.ts` with `Content-Disposition: attachment`. When `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` are set, the hero button runs a Cloudflare Turnstile check first (invisible unless Cloudflare needs an interaction) and posts the token to the route, which verifies it before sending the file; direct GETs are refused. Without the keys the button is a plain link and the route serves the file, so nothing breaks before setup.
 
 ## Deploy
 

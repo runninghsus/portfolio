@@ -3,7 +3,9 @@ import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import AskPanel from "@/components/AskPanel";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
+import { THEME_BOOT } from "@/lib/theme";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -30,11 +32,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={sourceSans.variable}>
+    <html lang="en" className={sourceSans.variable} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <main className="flex-1">{children}</main>
         <Footer />
         <AskPanel />
+        <Analytics />
       </body>
     </html>
   );

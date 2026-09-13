@@ -55,7 +55,7 @@ export const groups: Group[] = [
         title: "From multiple product models to one production decision system",
         why: "Predict what a client may need next, prioritize what matters, deploy the models, and continuously test whether the system remains trustworthy.",
         paras: [
-          "Built and productionized likelihood models across several commercial-banking product areas, accounting for selection bias in historical offer data and automating recurring evaluation. Led the ranking layer that converts independent model outputs into prioritized recommendations by combining predictive likelihood with economic and customer-context signals — from algorithm design and stakeholder alignment through Model Risk Management and production release.",
+          "Built and productionized likelihood models across 30+ commercial-banking products, accounting for selection bias in historical offer data and automating recurring evaluation. Led the ranking layer that converts independent model outputs into prioritized recommendations by combining predictive likelihood with economic and customer-context signals — from algorithm design and stakeholder alignment through Model Risk Management and production release. The system now refreshes thousands of recommendations a month, with multiple-fold lift over baseline targeting, and replaced workflows that took one to two days of manual work per cycle.",
           "Designed monitoring around three distinct failure points: data validity between refreshes with Anomalo, model validity through recurring AUC evaluation, and output usefulness through lift against downstream outcomes. Data quality, model quality and decision usefulness are three different questions, so they get three different checks. In 2026, led the signal discovery — customer patterns, peer behavior, emerging needs — that extends the framework into new product areas.",
         ],
         tags: ["Python", "LightGBM", "scikit-learn", "Polars", "Snowflake", "AWS SageMaker", "Evidently AI", "Anomalo"],
@@ -70,7 +70,7 @@ export const groups: Group[] = [
         paras: [
           "Led development of a four-layer multi-agent architecture for working with enterprise information. Specialist agents independently summarize data, surface key findings, and raise questions. Their outputs enter a discussion layer where agents exchange evidence and incorporate human-in-the-loop feedback.",
           "An orchestrator then consolidates and reconciles competing or overlapping findings into a coherent result. A separate verification layer checks conclusions back against source data where possible and applies structured evaluation where direct verification is harder.",
-          "The architecture powers customer and colleague synthesis, recommended actions, grounded content generation, and self-service prospecting — letting sales colleagues work iteratively with enterprise information without SQL or programming expertise. Built as a React front end on a FastAPI service, deployed through Shakudo, with models served from Amazon Bedrock.",
+          "The architecture powers customer and colleague synthesis, recommended actions, grounded content generation, and self-service prospecting — letting sales colleagues work iteratively with enterprise information without SQL or programming expertise. It is being scaled across the commercial bank to hundreds of bankers, cutting customer research from hours to minutes, and is one of eight concurrent AI, ML and analytics workstreams I lead with a team of four senior data scientists. Built as a React front end on a FastAPI service, deployed through Shakudo, with models served from Amazon Bedrock.",
         ],
         tags: ["Python", "FastAPI", "React", "Amazon Bedrock", "Shakudo", "Snowflake"],
       },
@@ -83,7 +83,7 @@ export const groups: Group[] = [
         why: "Resolve imperfect data, apply analytical logic, and put the result into interactive tools instead of static analysis.",
         paras: [
           "Built applications that turn inconsistent enterprise data into structured decision support using entity resolution, fuzzy matching, analytical calculations, and dynamic user inputs. The same pattern has been applied to prospecting, customer segmentation, and sales prioritization: resolve the underlying data first, then calculate context-specific signals and expose them through an interface where users can explore and act on them.",
-          "Developed forward-looking segmentation that combines current relationships, potential opportunity, and strategic priorities; took analytical products from prototype through scheduled production delivery and monitoring in Power BI and Tableau; and built planning applications that connect company strategy with colleague outreach to support executive customer engagement. The current direction is to retire static dashboards in favor of these dynamic, agent-backed decision systems.",
+          "Developed forward-looking segmentation that combines current relationships, potential opportunity, and strategic priorities; took analytical products from prototype through scheduled production delivery and monitoring in Power BI and Tableau; and built planning applications that connect company strategy with colleague outreach to support executive customer engagement. Together they support decisions across thousands of commercial relationships and prospects. The current direction is to retire static dashboards in favor of these dynamic, agent-backed decision systems.",
         ],
         tags: ["Python", "FastAPI", "React", "Snowflake", "Power BI", "Tableau", "Shakudo", "Fuzzy matching"],
       },
@@ -154,7 +154,7 @@ export const groups: Group[] = [
         category: "Full-stack iOS app · On the App Store",
         title: "Vowel for Weddings — answers your guests' questions so you don't have to",
         why: "Hosts stop fielding the same fifty questions; guests get answers, photos of themselves, and a reason to talk to each other.",
-        how: "A native Swift app on a Supabase backend. A wedding assistant answers guests from what the host entered (schedule, venue, dress code, menu) and hands off to the host when it doesn't know; face matching lets guests find themselves in the gallery from a few selfies; nearby-guest discovery, icebreaker profiles, and pinned host announcements round it out. Designed, built, and shipped solo.",
+        how: "A native Swift app on a Supabase backend. A wedding assistant answers guests from what the host entered (schedule, venue, dress code, menu) and hands off to the host when it doesn't know; face matching lets guests find themselves in the gallery from a few selfies; nearby-guest discovery, icebreaker profiles, and pinned host announcements round it out. Designed, built, and shipped solo — and first used at my own wedding, by 30+ guests.",
         tags: ["Swift", "Supabase", "Fly.io"],
         links: [{ label: "App Store", href: "https://apps.apple.com/us/app/vowel-for-weddings/id6767973719" }],
       },

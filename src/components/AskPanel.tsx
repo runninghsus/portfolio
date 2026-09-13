@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { suggestions } from "@/data/bot";
 import { site } from "@/data/site";
+import { extractActions } from "@/lib/actions";
+import { runAction } from "@/lib/page-actions";
+import { groups } from "@/data/projects";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -31,6 +34,8 @@ export default function AskPanel() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState<string>("all");
+  const doneRef = useRef(0); // actions already executed for the reply being streamed
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -72,12 +77,16 @@ export default function AskPanel() {
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let acc = "";
+      doneRef.current = 0;
+      const isSlug = (slug: string) => !!document.getElementById(slug);
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
         acc += dec.decode(value, { stream: true });
-        const snapshot = acc;
-        setMsgs((cur) => cur.map((m, i) => (i === cur.length - 1 ? { ...m, content: snapshot } : m)));
+        const { text, actions } = extractActions(acc, isSlug);
+        for (const a of actions.slice(doneRef.current)) runAction(a, setFilter);
+        doneRef.current = actions.length;
+        setMsgs((cur) => cur.map((m, i) => (i === cur.length - 1 ? { ...m, content: text } : m)));
       }
       if (!acc) throw new Error("empty");
     } catch (e) {
@@ -97,8 +106,18 @@ export default function AskPanel() {
     void ask(input);
   }
 
+  const filterName = groups.find((g) => g.id === filter)?.heading;
+
   return (
     <>
+      {filter !== "all" && (
+        <div className="filter-pill" role="status">
+          Showing {filterName} only
+          <button type="button" onClick={() => runAction({ type: "filter", chapter: "all" }, setFilter)}>
+            Show all
+          </button>
+        </div>
+      )}
       <button type="button" className={`ask-fab${open ? " hidden-fab" : ""}`} onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
         <span className="ask-dot" aria-hidden="true" />
         Ask about my work
@@ -120,7 +139,7 @@ export default function AskPanel() {
             {msgs.length === 0 && (
               <div className="ask-intro">
                 <p>
-                  A small assistant that answers from what&apos;s on this page — nothing more. For anything it doesn&apos;t know,{" "}
+                  Answers only from what&apos;s on this page — and can scroll you to the right spot, step through a diagram, or switch the theme. For anything it doesn&apos;t know,{" "}
                   <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="text-link">
                     message Alex on LinkedIn
                   </a>

@@ -3,26 +3,46 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Card, ArrowRight, Tile, Defs, R, INK, T, type Reveal, BsoidBody, BrainBody, VowelBody } from "./scenes";
 import { PipelineBody, AgentsBody, AppsBody, BANK_H } from "./scenes-bank";
+import { tutorialSteps } from "@/data/steps";
 
 /* ------------------------------------------------------------------ */
 /* Generic stepped tutorial: auto-plays, pauses on hover/focus, arrows  */
 /* and dots to navigate, last step shows the whole picture.              */
 /* ------------------------------------------------------------------ */
-export type Step = { title: string; note?: string };
 
-function Tutorial({ steps, label, interval = 4000, height = 268, children }: { steps: Step[]; label: string; interval?: number; height?: number; children: (reveal: Reveal, step: number) => ReactNode }) {
+function Tutorial({ slug, interval = 4000, height = 268, children }: { slug: string; interval?: number; height?: number; children: (reveal: Reveal, step: number) => ReactNode }) {
+  const { label, steps } = tutorialSteps[slug];
   const [step, setStep] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [held, setHeld] = useState(false); // parked on a step by the assistant
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
   useEffect(() => {
-    if (paused || reduced) return;
+    if (paused || reduced || held) return;
     const id = window.setInterval(() => setStep((s) => (s + 1) % steps.length), interval);
     return () => window.clearInterval(id);
-  }, [paused, reduced, steps.length, interval]);
+  }, [paused, reduced, held, steps.length, interval]);
+  // The site assistant can park a tutorial on a step: window.dispatchEvent(new CustomEvent("tutorial:go", { detail: { slug, step } }))
+  useEffect(() => {
+    let timer = 0;
+    const onGo = (e: Event) => {
+      const d = (e as CustomEvent<{ slug: string; step: number }>).detail;
+      if (!d || d.slug !== slug) return;
+      const n = Math.min(Math.max(Math.round(d.step) - 1, 0), steps.length - 1);
+      setStep(n);
+      setHeld(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setHeld(false), 20000);
+    };
+    window.addEventListener("tutorial:go", onGo);
+    return () => {
+      window.removeEventListener("tutorial:go", onGo);
+      window.clearTimeout(timer);
+    };
+  }, [slug, steps.length]);
 
   const last = steps.length - 1;
   const go = (n: number) => setStep(((n % steps.length) + steps.length) % steps.length);
@@ -90,15 +110,8 @@ function Tutorial({ steps, label, interval = 4000, height = 268, children }: { s
 /* B-SOiD                                                               */
 /* ------------------------------------------------------------------ */
 export function BsoidTutorial() {
-  const steps: Step[] = [
-    { title: "Track the animal: a pose estimate on every video frame", note: "8 keypoints, (x, y) per frame" },
-    { title: "Turn keypoints into numbers over time", note: "distances, angles, speeds" },
-    { title: "Compress and cluster — each cluster is a behavior", note: "found in the data, not defined by a person" },
-    { title: "Label new video frame by frame, in milliseconds", note: "" },
-    { title: "No human labels. Used by 100+ labs", note: "Nature Communications 2021 · 216★ on GitHub" },
-  ];
   return (
-    <Tutorial steps={steps} label="How B-SOiD works">
+    <Tutorial slug="b-soid">
       {(reveal) => <BsoidBody reveal={reveal} />}
     </Tutorial>
   );
@@ -180,16 +193,8 @@ function AsoidBody({ reveal, step }: { reveal: Reveal; step: number }) {
 }
 
 export function AsoidTutorial() {
-  const steps: Step[] = [
-    { title: "Start with a handful of labeled frames", note: "out of thousands" },
-    { title: "The model labels every frame — with a confidence", note: "" },
-    { title: "Confident ones: keep the model's label", note: "no human time spent" },
-    { title: "Unsure ones: ask the expert — only those", note: "" },
-    { title: "Their labels go back in. Retrain, repeat", note: "" },
-    { title: "Same accuracy, 12% of the labels", note: "vs. labeling everything by hand · Nature Methods 2024" },
-  ];
   return (
-    <Tutorial steps={steps} label="How A-SOiD works">
+    <Tutorial slug="a-soid">
       {(reveal, step) => <AsoidBody reveal={reveal} step={step} />}
     </Tutorial>
   );
@@ -199,15 +204,8 @@ export function AsoidTutorial() {
 /* Brain chatter → behavior                                             */
 /* ------------------------------------------------------------------ */
 export function BrainTutorial() {
-  const steps: Step[] = [
-    { title: "Record: 4 cameras around the clock, a 384-site probe in the brain", note: "video and brain signals synced to under 33 ms" },
-    { title: "Brain chatter: spikes streaming from every layer", note: "cortex to striatum" },
-    { title: "Decode: predict what the animal is doing from the chatter alone", note: "a decoder trained per animal" },
-    { title: "Check it against what the cameras saw", note: "B-SOiD labels from the video" },
-    { title: "160 TB · 150+ hours · 3 animals", note: "100,000s of behaviors decoded" },
-  ];
   return (
-    <Tutorial steps={steps} label="Decoding behavior from brain chatter">
+    <Tutorial slug="neural-decoding">
       {(reveal) => <BrainBody reveal={reveal} />}
     </Tutorial>
   );
@@ -217,15 +215,8 @@ export function BrainTutorial() {
 /* Vowel                                                                */
 /* ------------------------------------------------------------------ */
 export function VowelTutorial() {
-  const steps: Step[] = [
-    { title: "The host enters the details once", note: "schedule, venue, dress code, menu" },
-    { title: "Guests ask in the app; the assistant answers from those details", note: "" },
-    { title: "When it doesn't know, it hands the question to the host", note: "no made-up answers" },
-    { title: "Guests also find their photos, see who's nearby, get announcements", note: "" },
-    { title: "Vowel for Weddings — on the App Store", note: "Swift · SwiftUI · Supabase" },
-  ];
   return (
-    <Tutorial steps={steps} label="How Vowel works">
+    <Tutorial slug="vowel">
       {(reveal) => <VowelBody reveal={reveal} />}
     </Tutorial>
   );
@@ -235,15 +226,8 @@ export function VowelTutorial() {
 /* Huntington · production ML: the lifecycle, monitored at three points */
 /* ------------------------------------------------------------------ */
 export function PipelineTutorial() {
-  const steps: Step[] = [
-    { title: "Data — recurring features and historical outcomes", note: "refreshed on a schedule; selection bias in past offers handled explicitly" },
-    { title: "Model — train and evaluate predictive models", note: "one likelihood model per product area, on a shared framework" },
-    { title: "Decision — combine model outputs into one prioritization", note: "predictive likelihood + economic and customer-context signals → a ranked list of actions" },
-    { title: "Deploy — deliver recommendations into the workflow", note: "in the tool bankers already use, with the reason attached" },
-    { title: "Monitor — validate data, model performance and output usefulness", note: "refresh vs refresh · AUC over time · lift against downstream outcomes" },
-  ];
   return (
-    <Tutorial steps={steps} label="The production ML lifecycle" height={BANK_H}>
+    <Tutorial slug="production-ml" height={BANK_H}>
       {(reveal) => <PipelineBody reveal={reveal} />}
     </Tutorial>
   );
@@ -253,14 +237,8 @@ export function PipelineTutorial() {
 /* Huntington · agentic AI: four layers                                 */
 /* ------------------------------------------------------------------ */
 export function AgentsTutorial() {
-  const steps: Step[] = [
-    { title: "Specialists — summarize · find · question", note: "each agent takes one slice of the problem; no single model is handed everything" },
-    { title: "Discussion — agents ↔ agents ↔ human", note: "evidence is exchanged, disagreements surface, and a person adds context or challenges a conclusion" },
-    { title: "Orchestrator — consolidate · summarize · reconcile", note: "overlapping, duplicated or inconsistent findings become one coherent result" },
-    { title: "Verification — check conclusions against evidence", note: "directly against source data where possible; structured evaluation where it isn't" },
-  ];
   return (
-    <Tutorial steps={steps} label="The four-layer agent architecture" interval={4500} height={BANK_H}>
+    <Tutorial slug="agentic-ai" interval={4500} height={BANK_H}>
       {(reveal) => <AgentsBody reveal={reveal} />}
     </Tutorial>
   );
@@ -270,14 +248,8 @@ export function AgentsTutorial() {
 /* Huntington · intelligent data applications                           */
 /* ------------------------------------------------------------------ */
 export function AppsTutorial() {
-  const steps: Step[] = [
-    { title: "Resolve — messy enterprise data", note: "entity resolution and fuzzy matching turn inconsistent records into one structured signal" },
-    { title: "Calculate — signals · segmentation · business logic", note: "context-specific calculations, not a static table" },
-    { title: "Interact — dynamic user inputs", note: "change an assumption and the recommendation changes with it" },
-    { title: "Act — prospecting · outreach · planning", note: "the decision happens in the tool, not in a deck" },
-  ];
   return (
-    <Tutorial steps={steps} label="From messy data to a decision" height={BANK_H}>
+    <Tutorial slug="data-apps" height={BANK_H}>
       {(reveal) => <AppsBody reveal={reveal} />}
     </Tutorial>
   );

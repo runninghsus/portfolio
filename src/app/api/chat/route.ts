@@ -107,7 +107,8 @@ export async function POST(req: NextRequest) {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       temperature: 0.2,
-      system: buildSystemPrompt(),
+      // cache the (identical) system prompt across calls — cuts input cost sharply on repeat questions
+      system: [{ type: "text", text: buildSystemPrompt(), cache_control: { type: "ephemeral" } }],
       messages,
       stream: true,
     }),

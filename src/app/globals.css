@@ -34,10 +34,12 @@
   --fs-label: 13px; /* 600, uppercase, .08em */
   --fs-figure: 44px; /* 700, tabular numerals */
   --lh-body: 1.55;
+  color-scheme: light;
 }
 
+/* Dark: the system setting, unless the visitor (or the assistant) chose light… */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #1f1d1b;
     --bg-alt: #262321;
     --ink: #f3f0ec;
@@ -55,7 +57,29 @@
     --dark-panel-muted: #b9b2ab;
     --fig: #2b2825;
     --fig-ink: #f3f0ec;
+    color-scheme: dark;
   }
+}
+/* …or chose dark explicitly (data-theme is set by the assistant / remembered in localStorage). */
+:root[data-theme="dark"] {
+  --bg: #1f1d1b;
+  --bg-alt: #262321;
+  --ink: #f3f0ec;
+  --text: #d4cec8;
+  --muted: #a39b94;
+  --rule: #3b3734;
+  --rule-strong: #f3f0ec;
+  --card: #2b2825;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.35);
+  --accent: #d95a48;
+  --accent-hover: #e8745f;
+  --link: #e8745f;
+  --dark-panel: #161513;
+  --dark-panel-text: #f3f0ec;
+  --dark-panel-muted: #b9b2ab;
+  --fig: #2b2825;
+  --fig-ink: #f3f0ec;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -808,6 +832,111 @@ h1 {
   .ask-panel {
     display: none !important;
   }
+}
+
+/* Assistant actions: spotlight pulse, chapter filter, filter pill */
+.spotlight {
+  animation: spotlight 2.4s ease-out;
+  border-radius: 6px;
+}
+@keyframes spotlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(199, 70, 52, 0.6);
+  }
+  60% {
+    box-shadow: 0 0 0 12px rgba(199, 70, 52, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(199, 70, 52, 0);
+  }
+}
+body[data-filter="huntington"] .chapter:not([data-chapter="huntington"]),
+body[data-filter="phd"] .chapter:not([data-chapter="phd"]),
+body[data-filter="personal"] .chapter:not([data-chapter="personal"]) {
+  display: none;
+}
+body[data-filter="huntington"] .ogroup:not([data-chapter="huntington"]),
+body[data-filter="phd"] .ogroup:not([data-chapter="phd"]),
+body[data-filter="personal"] .ogroup:not([data-chapter="personal"]) {
+  opacity: 0.4;
+}
+body[data-filter] .chapter > .feature:last-child {
+  border-bottom: 0;
+}
+.filter-pill {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 16px;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.filter-pill button {
+  appearance: none;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+@media (max-width: 560px) {
+  .filter-pill {
+    left: 12px;
+    bottom: 76px;
+  }
+}
+
+/* Résumé download gate (Cloudflare Turnstile) */
+.resume-gate {
+  position: relative;
+  display: inline-block;
+}
+.gate-box {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  z-index: 30;
+  padding: 12px 12px 8px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  min-width: 320px;
+}
+.gate-box.show {
+  display: block;
+}
+.gate-note {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+.gate-error {
+  display: block;
+  margin-top: 8px;
+  color: var(--dark-panel-muted);
+  font-size: var(--fs-label);
+  max-width: 320px;
+}
+.resume-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
 }
 
 /* Footer */

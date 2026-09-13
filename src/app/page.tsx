@@ -4,6 +4,7 @@ import FeatureRow from "@/components/FeatureRow";
 import JumpCards from "@/components/JumpCards";
 import KeyFacts from "@/components/KeyFacts";
 import ExtIcon from "@/components/ExtIcon";
+import ResumeButton from "@/components/ResumeButton";
 import {
   PipelineTutorial,
   AgentsTutorial,
@@ -37,9 +38,7 @@ export default function Home() {
             <div className="kicker label">{site.name} · Ph.D.</div>
             <h1>{site.headline}</h1>
             <div className="actions">
-              <a href={site.resumePdf} target="_blank" rel="noopener noreferrer" className="btn primary">
-                Download résumé
-              </a>
+              <ResumeButton />
               <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="btn ghost">
                 LinkedIn
                 <ExtIcon />
@@ -64,7 +63,7 @@ export default function Home() {
           {(() => {
             let i = 0;
             return groups.map((g) => (
-              <div key={g.id} className="chapter">
+              <div key={g.id} className="chapter" data-chapter={g.id}>
                 {g.items.map((item) => (
                   <FeatureRow key={item.slug} item={item} figure={figures[item.slug]} flip={i++ % 2 === 1} />
                 ))}

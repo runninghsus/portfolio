@@ -9,7 +9,7 @@ export default function JumpCards({ groups }: { groups: Group[] }) {
   return (
     <nav className="overview" aria-label="Work overview">
       {groups.map((g) => (
-        <div key={g.id} className="ogroup" style={{ flex: g.items.length }}>
+        <div key={g.id} className="ogroup" data-chapter={g.id} style={{ flex: g.items.length }}>
           <div className="ogroup-head">
             <span className="label">{g.heading}</span>
             <span className="ogroup-when">{g.kicker.split("·").slice(-1)[0].trim()}</span>

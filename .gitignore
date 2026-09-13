@@ -148,3 +148,6 @@ _staging/
 Claude outputs/
 out/
 .next/
+
+# fully quantified résumé for direct applications — never published
+docs/private/
